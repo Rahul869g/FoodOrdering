@@ -11,6 +11,7 @@ module.exports = {
   ],
   theme: {
     colors: {
+      gainsboro: "#2f95dc",
       tint: {
         light: "#2f95dc",
         dark: "#fff"
