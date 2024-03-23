@@ -3,9 +3,10 @@ import React from "react";
 import { StatusBar } from "expo-status-bar";
 import { useCart } from "@/providers/CartProvider";
 import CartListItem from "@/components/CartListItem";
+import Button from "@/components/Buttons";
 
 const cart = () => {
-  const { items } = useCart();
+  const { items, total } = useCart();
   return (
     <View>
       <FlatList
@@ -13,6 +14,9 @@ const cart = () => {
         renderItem={({ item }) => <CartListItem cartItem={item} />}
         contentContainerStyle={{ padding: 10, gap: 10 }}
       />
+      <Text className="mt-5">Total : {total}</Text>
+      <Button text="Checkout" />
+
       {/* <Text>Cart Items : {items.length}</Text> */}
       <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
     </View>
