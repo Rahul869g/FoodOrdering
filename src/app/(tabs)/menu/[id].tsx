@@ -1,19 +1,24 @@
 import { View, Text, Image, Pressable } from "react-native";
 import React, { useState } from "react";
-import { Stack, useLocalSearchParams } from "expo-router";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import products from "@assets/data/products";
 import { defaultPizzaImage } from "@/components/ProductListItem";
 import Button from "@components/Buttons";
-
-const sizes = ["S", "M", "L", "XL"];
+import { useCart } from "@/providers/CartProvider";
+import { PizzaSize } from "@/types";
+const sizes: PizzaSize[] = ["S", "M", "L", "XL"];
 
 const ProductScreen = () => {
-  const [isSelected, SetIsSelected] = useState("M");
+  const { addItem } = useCart();
+  const [isSelected, SetIsSelected] = useState<PizzaSize>("M");
   const { id } = useLocalSearchParams();
   const product = products.find((p) => p.id.toString() === id);
 
+  const router = useRouter();
   const addToCart = () => {
-    console.warn("Product", isSelected);
+    if (!product) return;
+    addItem(product, isSelected);
+    router.push("/cart");
   };
 
   if (!product) return <Text className="flex-1">Product not found</Text>;
@@ -39,6 +44,7 @@ const ProductScreen = () => {
             }  aspect-square w-[50]  rounded-full  justify-center items-center`}
           >
             <Text
+              onPress={() => SetIsSelected(size)}
               className={`${
                 isSelected == size ? "text-gray-darkest" : "text-gray-dark"
               }text-xl mx-2 font-medium`}

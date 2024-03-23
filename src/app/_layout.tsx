@@ -12,6 +12,7 @@ import { useEffect } from "react";
 import { useColorScheme } from "@components/useColorScheme";
 import { NativeWindStyleSheet } from "nativewind";
 import "../../global.css";
+import CartProvider from "@/providers/CartProvider";
 
 NativeWindStyleSheet.setOutput({
   default: "native"
@@ -58,11 +59,13 @@ function RootLayoutNav() {
   const colorScheme = useColorScheme();
 
   return (
-    <ThemeProvider value={colorScheme === "light" ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: "modal" }} />
-      </Stack>
+    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+      <CartProvider>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="cart" options={{ presentation: "modal" }} />
+        </Stack>
+      </CartProvider>
     </ThemeProvider>
   );
 }

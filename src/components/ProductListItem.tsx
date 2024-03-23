@@ -16,7 +16,7 @@ const ProductListItem = ({ product }: ProductListItemProps) => {
     <Link asChild href={`/menu/${product.id}`}>
       <Pressable
         key={product.id}
-        className="bg-gray-light max-w-[50%] p-3 rounded-2xl flex-1"
+        className="bg-[#e1e1e1] max-w-[50%] p-3 rounded-2xl flex-1"
       >
         <Image
           className="w-full aspect-square"
