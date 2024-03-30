@@ -6,6 +6,7 @@ type cartType = {
   items: CartItem[];
   addItem: (product: Product, size: CartItem["size"]) => void;
   updateQuantity: (itemId: string, amount: -1 | 1) => void;
+  total: number;
 };
 
 const CartContext = createContext<cartType>({
