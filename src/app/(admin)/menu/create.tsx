@@ -1,12 +1,14 @@
-import { View, Text, TextInput, Image } from "react-native";
+import { View, Text, TextInput, Image, Alert } from "react-native";
 import React, { useState } from "react";
 import Button from "@/components/Buttons";
 import { defaultPizzaImage } from "@/components/ProductListItem";
 import * as ImagePicker from "expo-image-picker";
-import { Stack } from "expo-router";
+import { Stack, useLocalSearchParams } from "expo-router";
 
 const create = () => {
   const [image, setImage] = useState<string | null>(null);
+  const { id } = useLocalSearchParams();
+  const isUpdating = !!id;
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -27,6 +29,13 @@ const create = () => {
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [error, setError] = useState("");
+  const onSubmit = () => {
+    if (isUpdating) {
+      onUpdateCreate();
+    } else {
+      onCreate();
+    }
+  };
   const onCreate = () => {
     if (!validateInput()) {
       return;
@@ -35,6 +44,34 @@ const create = () => {
 
     //Save in the DB
     resetFields();
+  };
+  const onUpdateCreate = () => {
+    if (!validateInput()) {
+      return;
+    }
+    console.warn("onUpdateCreate", name, price);
+
+    //Save in the DB
+    resetFields();
+  };
+  const onDelete = () => {
+    if (!validateInput()) {
+      return;
+    }
+    console.warn("onUpdateCreate", name, price);
+
+    //Save in the DB
+    resetFields();
+  };
+  const confirmDelete = () => {
+    Alert.alert("Confirm ", "Are you sure ?", [
+      { text: "Cancel" },
+      {
+        text: "Delete",
+        style: "destructive",
+        onPress: onDelete
+      }
+    ]);
   };
 
   const validateInput = () => {
@@ -61,7 +98,9 @@ const create = () => {
   };
   return (
     <View className="flex-1 justify-center p-2">
-      <Stack.Screen options={{ title: "Create Product" }} />
+      <Stack.Screen
+        options={{ title: isUpdating ? "Update Product" : "Create Product" }}
+      />
       <Image
         source={{ uri: image || defaultPizzaImage }}
         className="w-1/2 h-1/2 self-center aspect-square rounded"
@@ -89,7 +128,8 @@ const create = () => {
         className="rounded-md mt-1 mb-5 p-2 bg-tint-dark"
       />
       <Text className="text-[#12efee]  text-lg">{error}</Text>
-      <Button onPress={onCreate} text="Create" />
+      <Button onPress={onSubmit} text={isUpdating ? "Update" : "Create"} />
+      {isUpdating && <Text onPress={confirmDelete}>Delete</Text>}
     </View>
   );
 };
