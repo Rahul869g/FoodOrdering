@@ -7,6 +7,7 @@
       "@/*": ["src/*"],
       "@app/*": ["src/app/*"],
       "@components/*": ["src/components/*"],
+      "@lib/*": ["src/lib/*"],
       "@constants/*": ["src/constants/*"],
       "@providers/*": ["src/providers/*"],
       "@assets/*": ["assets/*"]
