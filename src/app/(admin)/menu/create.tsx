@@ -1,14 +1,40 @@
 import { View, Text, TextInput, Image, Alert } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "@/components/Buttons";
 import { defaultPizzaImage } from "@/components/ProductListItem";
 import * as ImagePicker from "expo-image-picker";
-import { Stack, useLocalSearchParams } from "expo-router";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import {
+  useDeleteProduct,
+  useInsertProduct,
+  useProductItem,
+  useUpdateProduct
+} from "@/api/products";
 
 const create = () => {
   const [image, setImage] = useState<string | null>(null);
-  const { id } = useLocalSearchParams();
+
+  const { id: idString } = useLocalSearchParams();
+  const id = parseFloat(
+    typeof idString === "string" ? idString : idString?.[0]
+  );
+
   const isUpdating = !!id;
+
+  const { mutate: insertProduct } = useInsertProduct();
+  const { mutate: updateProduct } = useUpdateProduct();
+  const { data: updatingProduct } = useProductItem(id);
+  const { mutate: deleteProduct } = useDeleteProduct();
+
+  const router = useRouter();
+
+  useEffect(() => {
+    if (updatingProduct) {
+      setName(updatingProduct.name);
+      setPrice(updatingProduct.price.toString());
+      setImage(updatingProduct.image);
+    }
+  }, [updatingProduct]);
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -31,7 +57,7 @@ const create = () => {
   const [error, setError] = useState("");
   const onSubmit = () => {
     if (isUpdating) {
-      onUpdateCreate();
+      onUpdate();
     } else {
       onCreate();
     }
@@ -40,28 +66,55 @@ const create = () => {
     if (!validateInput()) {
       return;
     }
-    console.warn("onCreate", name, price);
-
-    //Save in the DB
-    resetFields();
+    insertProduct(
+      {
+        name,
+        price: parseFloat(price),
+        image
+      },
+      {
+        onSuccess: () => {
+          console.warn("Product Created", name, price);
+          //Save in the DB
+          resetFields();
+          router.back();
+        }
+      }
+    );
   };
-  const onUpdateCreate = () => {
+  const onUpdate = () => {
     if (!validateInput()) {
       return;
     }
-    console.warn("onUpdateCreate", name, price);
+    updateProduct(
+      {
+        id,
+        name,
+        price: parseFloat(price),
+        image
+      },
+      {
+        onSuccess: () => {
+          console.warn("Product Updated", name, price);
 
-    //Save in the DB
-    resetFields();
+          resetFields();
+          router.back();
+          router.back();
+        }
+      }
+    );
   };
   const onDelete = () => {
     if (!validateInput()) {
       return;
     }
-    console.warn("onUpdateCreate", name, price);
-
-    //Save in the DB
-    resetFields();
+    deleteProduct(id, {
+      onSuccess: () => {
+        console.warn("Product Deleted", name);
+        resetFields();
+        router.replace("/(admin)");
+      }
+    });
   };
   const confirmDelete = () => {
     Alert.alert("Confirm ", "Are you sure ?", [
@@ -103,7 +156,7 @@ const create = () => {
       />
       <Image
         source={{ uri: image || defaultPizzaImage }}
-        className="w-1/2 h-1/2 self-center aspect-square rounded"
+        className="w-1/4 h-1/4 self-center aspect-square rounded"
       />
 
       <Text
@@ -129,7 +182,11 @@ const create = () => {
       />
       <Text className="text-[#12efee]  text-lg">{error}</Text>
       <Button onPress={onSubmit} text={isUpdating ? "Update" : "Create"} />
-      {isUpdating && <Text onPress={confirmDelete}>Delete</Text>}
+      {isUpdating && (
+        <Text className=" self-center text-blue-dark" onPress={confirmDelete}>
+          Delete
+        </Text>
+      )}
     </View>
   );
 };
