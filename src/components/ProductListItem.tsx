@@ -1,11 +1,11 @@
 import React from "react";
 import { Image, Pressable, Text, View } from "react-native";
-import { Product } from "../types";
+import { Product, Tables } from "../types";
 import products from "@assets/data/products";
 import { Link, useSegments } from "expo-router";
 
 type ProductListItemProps = {
-  product: Product;
+  product: Tables<"products">;
 };
 
 export const defaultPizzaImage =
