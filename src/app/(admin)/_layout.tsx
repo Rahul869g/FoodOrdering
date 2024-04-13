@@ -23,9 +23,9 @@ export default function TabLayout() {
   if (!isAdmin) {
     return <Redirect href={"/"} />;
   }
-  if (!profile || profile.group !== "ADMIN") {
-    return <Redirect href="/" />;
-  }
+  // if (!profile || profile.group !== "ADMIN") {
+  //   return <Redirect href="/" />;
+  // }
   return (
     <Tabs
       screenOptions={{

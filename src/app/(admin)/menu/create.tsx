@@ -10,6 +10,11 @@ import {
   useProductItem,
   useUpdateProduct
 } from "@/api/products";
+import { randomUUID } from "expo-crypto";
+import * as FileSystem from "expo-file-system";
+import { supabase } from "@/lib/supabase";
+import { decode } from "base64-arraybuffer";
+import RemoteImage from "@/components/RemoteImage";
 
 const create = () => {
   const [image, setImage] = useState<string | null>(null);
@@ -62,15 +67,18 @@ const create = () => {
       onCreate();
     }
   };
-  const onCreate = () => {
+  const onCreate = async () => {
     if (!validateInput()) {
       return;
     }
+
+    const imagePath = await uploadImage();
+
     insertProduct(
       {
         name,
         price: parseFloat(price),
-        image
+        image: imagePath
       },
       {
         onSuccess: () => {
@@ -82,16 +90,18 @@ const create = () => {
       }
     );
   };
-  const onUpdate = () => {
+  const onUpdate = async () => {
     if (!validateInput()) {
       return;
     }
+    const imagePath = await uploadImage();
+
     updateProduct(
       {
         id,
         name,
         price: parseFloat(price),
-        image
+        image: imagePath
       },
       {
         onSuccess: () => {
@@ -149,13 +159,33 @@ const create = () => {
     setName("");
     setPrice("");
   };
+
+  const uploadImage = async () => {
+    if (!image?.startsWith("file://")) {
+      return;
+    }
+
+    const base64 = await FileSystem.readAsStringAsync(image, {
+      encoding: "base64"
+    });
+    const filePath = `${randomUUID()}.png`;
+    const contentType = "image/png";
+    const { data, error } = await supabase.storage
+      .from("product-images")
+      .upload(filePath, decode(base64), { contentType });
+
+    if (data) {
+      return data.path;
+    }
+  };
   return (
     <View className="flex-1 justify-center p-2">
       <Stack.Screen
         options={{ title: isUpdating ? "Update Product" : "Create Product" }}
       />
-      <Image
-        source={{ uri: image || defaultPizzaImage }}
+      <RemoteImage
+        path={image}
+        fallback={defaultPizzaImage}
         className="w-1/4 h-1/4 self-center aspect-square rounded"
       />
 

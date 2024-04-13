@@ -7,6 +7,7 @@ import { useCart } from "@/providers/CartProvider";
 import { PizzaSize } from "@/types";
 import { FontAwesome } from "@expo/vector-icons";
 import { useProductItem } from "@/api/products";
+import RemoteImage from "@/components/RemoteImage";
 
 const ProductScreen = () => {
   const { id: idString } = useLocalSearchParams();
@@ -54,11 +55,12 @@ const ProductScreen = () => {
       />
       <Stack.Screen options={{ title: product?.name }} />
       {/* <Text className="text-2xl">ProductScreen: {id}</Text> */}
-      <Image
+      <RemoteImage
+        path={product?.image}
+        fallback={defaultPizzaImage}
         className="w-full my-1 aspect-square"
-        source={{ uri: product?.image || defaultPizzaImage }}
         resizeMode="contain"
-      ></Image>
+      />
 
       <Text className="text-xl mx-2 font-extrabold ">
         Name: {product?.name}

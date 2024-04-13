@@ -3,6 +3,7 @@ import { Image, Pressable, Text, View } from "react-native";
 import { Product, Tables } from "../types";
 import products from "@assets/data/products";
 import { Link, useSegments } from "expo-router";
+import RemoteImage from "./RemoteImage";
 
 type ProductListItemProps = {
   product: Tables<"products">;
@@ -20,11 +21,12 @@ const ProductListItem = ({ product }: ProductListItemProps) => {
         key={product.id}
         className="bg-[#e1e1e1] max-w-[50%] p-3 rounded-2xl flex-1"
       >
-        <Image
+        <RemoteImage
+          path={product?.image}
+          fallback={defaultPizzaImage}
           className="w-full aspect-square"
-          source={{ uri: product.image || defaultPizzaImage }}
           resizeMode="contain"
-        ></Image>
+        />
         <Text className="text-lg font-bold my-2 ">{product.name}</Text>
         <Text className="font-bold text-tint-light">${product.price}</Text>
       </Pressable>

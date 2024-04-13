@@ -1,16 +1,36 @@
-import { View, Text, FlatList, Pressable } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  Pressable,
+  ActivityIndicator
+} from "react-native";
 import React from "react";
 import { Stack, useLocalSearchParams } from "expo-router";
 import orders from "@assets/data/orders";
 import OrderListItem from "@/components/OrderListItem";
 import OrderItemListItem from "@/components/OrderItemListItem";
 import { OrderStatusList } from "@/types";
+import { useOrderDetails, useUpdateOrder } from "@/api/orders";
 
 const OrderDetailsScreen = () => {
-  const { id } = useLocalSearchParams();
-  const order = orders.find((item) => item.id.toString() === id);
-  if (!order) {
-    return <Text>Order not Found!</Text>;
+  const { id: idString } = useLocalSearchParams();
+  const id = parseFloat(typeof idString === "string" ? idString : idString[0]);
+  const { data: order, isLoading, error } = useOrderDetails(id);
+  const { mutate: updateOrder } = useUpdateOrder();
+
+  const updateStatus = (status) => {
+    updateOrder({ id: id, updatedField: { status } });
+    console.log("******", order);
+  };
+
+  if (isLoading) {
+    return <ActivityIndicator />;
+  }
+  if (error || !order) {
+    return <Text>Failed to fetch Products</Text>;
+
+    console.log(order);
   }
   return (
     <View className="p-3 rounded-lg">
@@ -27,7 +47,7 @@ const OrderDetailsScreen = () => {
               {OrderStatusList.map((status) => (
                 <Pressable
                   key={status}
-                  onPress={() => console.warn("Update status")}
+                  onPress={() => updateStatus(status)}
                   className={`border border-tint-light border-1 p-2 rounded-md my-[10] ${
                     order.status === status ? "bg-tint-light" : "transparent"
                   }`}

@@ -6,6 +6,7 @@ import Button from "@components/Buttons";
 import { useCart } from "@/providers/CartProvider";
 import { PizzaSize } from "@/types";
 import { useProductItem } from "@/api/products";
+import RemoteImage from "@/components/RemoteImage";
 const sizes: PizzaSize[] = ["S", "M", "L", "XL"];
 
 const ProductScreen = () => {
@@ -34,11 +35,12 @@ const ProductScreen = () => {
     <View className="m-2 flex-1">
       <Stack.Screen options={{ title: product?.name }} />
       {/* <Text className="text-2xl">ProductScreen: {id}</Text> */}
-      <Image
+      <RemoteImage
+        path={product?.image}
+        fallback={defaultPizzaImage}
         className="w-full my-1 aspect-square"
-        source={{ uri: product?.image || defaultPizzaImage }}
         resizeMode="contain"
-      ></Image>
+      />
       <Text className="text-lg mx-2 font-bold">Select Size</Text>
       <View className="flex flex-row justify-around my-4">
         {sizes.map((size) => (

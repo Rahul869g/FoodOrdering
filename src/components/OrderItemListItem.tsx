@@ -1,18 +1,20 @@
 import { View, Text, Image } from "react-native";
 import React from "react";
-import { OrderItem } from "@/types";
+import { OrderItem, Tables } from "@/types";
 import { defaultPizzaImage } from "./ProductListItem";
+import RemoteImage from "./RemoteImage";
 
 type OrderListItemProps = {
-  item: OrderItem;
+  item: { products: Tables<"products"> } & Tables<"order_items">;
 };
 
 const OrderItemListItem = ({ item }: OrderListItemProps) => {
   return (
     <View className="bg-tint-dark flex-1  p-1 rounded-md flex-row items-center">
-      <Image
+      <RemoteImage
         className="aspect-square self-center w-[75px]"
-        source={{ uri: item?.products?.image || defaultPizzaImage }}
+        path={item?.products?.image}
+        fallback={defaultPizzaImage}
         resizeMode="contain"
       />
       <View className="flex-1 ml-5  gap-y-[0.5px]">

@@ -3,10 +3,11 @@ import React from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { Link, useSegments } from "expo-router";
+import { Tables } from "@/database.types";
 
 dayjs.extend(relativeTime);
 type OrderListItemProps = {
-  order: Order;
+  order: Tables<"orders">;
 };
 const OrderListItem = ({ order }: OrderListItemProps) => {
   const segments = useSegments();
