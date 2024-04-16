@@ -19,9 +19,9 @@ const ExpoSecureStoreAdapter = {
 //   throw new Error("Supabase URL or key not defined");
 // }
 
-const supabaseUrl = "https://jkiqsdxsgzlehijocanj.supabase.co";
-const supabaseAnonKey =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpraXFzZHhzZ3psZWhpam9jYW5qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTI0Mjk1NDcsImV4cCI6MjAyODAwNTU0N30.iZdNzUMB5yCYzVL57DWXLo27CXD2SMTwU7HI-1Y2yYU";
+// you have to use your laptops IPV4 address instead of localhost
+const supabaseUrl = process.env.SUPABASE_URL || "";
+const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || "";
 
 export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
   auth: {
